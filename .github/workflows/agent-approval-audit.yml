@@ -1,0 +1,26 @@
+name: Agent Approval Audit Lab
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  statuses: write
+
+jobs:
+  approval-check:
+    if: >-
+      github.actor == 'cunhasombreroritmo-dot' &&
+      (github.event_name != 'issue_comment' || github.event.issue.pull_request)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: anthropics/claude-code-action/agent-approval-check@d535f5172dec02b204866b393d6b20b9b2aaf98d
+        with:
+          required_approvals: '1'
+          agent_emails: synthetic-agent@example.invalid
+          agent_logins: claude[bot],claude-code[bot]
+          protected_bases: main
