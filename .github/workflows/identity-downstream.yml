@@ -1,0 +1,30 @@
+name: Identity Probe Downstream
+
+on:
+  workflow_run:
+    workflows: ["Identity Probe Upstream"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display actor metadata
+        env:
+          CURRENT_ACTOR: ${{ github.actor }}
+          TRIGGERING_ACTOR: ${{ github.triggering_actor }}
+        run: |
+          echo "=== DOWNSTREAM ==="
+          echo "github.actor=$CURRENT_ACTOR"
+          echo "github.triggering_actor=$TRIGGERING_ACTOR"
+
+          echo "=== UPSTREAM EVENT ==="
+          jq -c '{
+            upstream_actor: .workflow_run.actor.login,
+            upstream_triggering_actor: .workflow_run.triggering_actor.login,
+            upstream_event: .workflow_run.event,
+            sender: .sender.login
+          }' "$GITHUB_EVENT_PATH"

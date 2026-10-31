@@ -1,0 +1,14 @@
+name: Identity Probe Upstream
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Complete synthetic upstream run
+        run: echo "Synthetic upstream completed"
